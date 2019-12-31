@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<body>
+
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+  <div class="w3-bar w3-white w3-wide w3-padding w3-card">
+    <a href="http://127.0.0.1:5000/" class="w3-bar-item w3-button"><b>SMART</b> BET.COM</a>
+    <!-- Float links to the right. Hide them on small screens -->
+    <div class="w3-left w3-hide-small">
+      <a href="#about" class="w3-bar-item w3-button">ML DNN</a>
+      <a href="#graphs" class="w3-bar-item w3-button">Market</a>
+      <a href="#contact" class="w3-bar-item w3-button">Contact</a>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
+  <img class="w3-image" src="img/header.jfif" style="width:100%">
+  <div class="w3-display-middle w3-margin-top w3-center">
+    <h1 class="w3-xxlarge w3-text-white"><span class="w3-padding w3-black w3-opacity-min"><b>SMARTBET</b></span> <span class="w3-hide-small w3-text-light-grey"></span></h1>
+  </div>
+  
+</header>
+<!-- Page content -->
+<div class="w3-content w3-padding" style="max-width:1564px">
+
+  <!-- About Section -->
+  <div class="w3-container w3-padding-32" id="about">
+    <h1 class="w3-border-bottom w3-border-light-grey w3-padding-16">Machine Learning Deep Neuronal Network - Football Predictor(Win/Lose/Draw)</h1>
+    <p>
+        <h2> Our Test Data</h2> 
+
+        <h3>The Dataset class converts the CSV data to an array of processed football results containing the following keys. Not all of the results in the dataset can be used, as there needs to have been 10 games of history for each team before the statistics can be calculated.</h3>
+        <xmp> 
+        [{
+          'result': 'H', # Could be H, D or A (for home team win, draw or away team win)
+          'odds-home': 1.6, # Decimal odds from Bet365 on a home team win
+          'odds-draw': 4.8, # Decimal odds from Bet365 on a draw
+          'odds-away': 6.0, # Decimal odds from Bet365 on an away team win
+          'home-wins': 6, # Number of wins by the home team in the last 10 games
+          'home-draws': 2, # Number of draws by the home team in the last 10 games
+          'home-losses': 2, # Number of losses by the home team in the last 10 games
+          'home-goals': 16, # Number of goals scored by the home team in the last 10 games
+          'home-opposition-goals': 12, # Number of goals scored against the home team in the last 10 games
+          'home-shots': 68, # Number of shots made by the home team in the last 10 games
+          'home-shots-on-target': 53, # Number of shots on target made by the home team in the last 10 games
+          'home-opposition-shots': 20, # Number of shots made against the home team in the last 10 games
+          'home-opposition-shots-on-target': 14, # Number of shots on target made against the home team in the last 10 games
+          'away-wins': 3, # Number of wins by the away team in the last 10 games
+          'away-draws': 4, # Number of draws by the away team in the last 10 games
+          'away-losses': 3, # Number of losses by the away team in the last 10 games
+          'away-goals': 13, # Number of goals scored by the away team in the last 10 games
+          'away-opposition-goals': 17, # Number of goals scored against the away team in the last 10 games
+          'away-shots': 32, # Number of shots made by the away team in the last 10 games
+          'away-shots-on-target': 13, # Number of shots on target made by the away team in the last 10 games
+          'away-opposition-shots': 47, # Number of shots made against the away team in the last 10 games
+          'away-opposition-shots-on-target': 21, # Number of shots on target made against the away team in the last 10 games
+        ]}
+        </xmp>
+        <h2>Feature Columns</h2>
+        <h3>
+        The DNNClassifier class we mentioned earlier requires an array of feature columns to be provided. Looking above to the test data section, we have quite a few features available to select.
+        Removing the result field (that’s going to be the label) and the odds fields, we are left with the following feature columns: </h3>
+        <xmp>
+        feature_columns = [
+          tf.feature_column.numeric_column(key='home-wins'),
+          tf.feature_column.numeric_column(key='home-draws'),
+          tf.feature_column.numeric_column(key='home-losses'),
+          tf.feature_column.numeric_column(key='home-goals'),
+          tf.feature_column.numeric_column(key='home-opposition-goals'),
+          tf.feature_column.numeric_column(key='home-shots'),
+          tf.feature_column.numeric_column(key='home-shots-on-target'),
+          tf.feature_column.numeric_column(key='home-opposition-shots'),
+          tf.feature_column.numeric_column(key='home-opposition-shots-on-target'),
+          tf.feature_column.numeric_column(key='away-wins'),
+          tf.feature_column.numeric_column(key='away-draws'),
+          tf.feature_column.numeric_column(key='away-losses'),
+          tf.feature_column.numeric_column(key='away-goals'),
+          tf.feature_column.numeric_column(key='away-opposition-goals'),
+          tf.feature_column.numeric_column(key='away-shots'),
+          tf.feature_column.numeric_column(key='away-shots-on-target'),
+          tf.feature_column.numeric_column(key='away-opposition-shots'),
+          tf.feature_column.numeric_column(key='away-opposition-shots-on-target'),
+        ]
+      </xmp>
+        <h2>The Model</h2>
+        <h3> 
+        This is where we create our model object. The model_dir parameter is used to save training progress so that you don’t have to retrain your model every time you want to make a prediction. The hidden_units parameter describes the shape of the neural network, [10] corresponds to one hidden layer with 10 neurons in it. We define the output that we expect from our model with n_classes and label_vocabulary. Here we state that the three classes our model will analyse are labelled by H, D or A. </h3>
+        <xmp>
+        model = tf.estimator.DNNClassifier(
+          model_dir='model/',
+          hidden_units=[10],
+          feature_columns=feature_columns,
+          n_classes=3,
+          label_vocabulary=['H', 'D', 'A'],
+          optimizer=tf.train.ProximalAdagradOptimizer(
+            learning_rate=0.1,
+            l1_regularization_strength=0.001
+          ))
+        </xmp>
+        <h3>
+        We can train our model using the train() method. A model can be trained indefinitely, but with diminishing returns. Different models descend at different rates, so it is important to watch the loss function to see if and when it has converged (and stopped descending).
+        </h3>
+        <xmp>
+        model.train(input_fn=train_input_fn, steps=1000)
+        The input_fn parameter is used to provide training data to the model. There are lots of clever ways to feed data into a model, but using numpy arrays is pretty quick and easy:
+        train_input_fn = tf.estimator.inputs.numpy_input_fn(
+          x=train_features,
+          y=train_labels,
+          batch_size=500,
+          num_epochs=None,
+          shuffle=True
+          )
+        </xmp>
+        <h2>
+        The Results
+        </h2>
+        <iframe frameborder=0 width="1300" height="500" src="https://analytics.zoho.com/open-view/1769279000003352110"></iframe>
+        The above graph shows how the model developed as it was trained. The DNN converges quickly on a solution and achieves an accuracy of 51%. This accuracy is slightly below the performance of Bookmakers, Bet365 achieves around 53-54% on the same results.The betting return is less stable, and is in the region of a 50% return on investment.
+    </p>
+  </div>
+
+  <!-- Graphs Section -->
+  <div class="w3-container w3-padding-32" id="graphs">
+    <h1 class="w3-border-bottom w3-border-light-grey w3-padding-10">Betting Market</h1>
+  </div>
+  <h4>Betting venues in Mexico continue with a positive grow tendency, but these is not even necessary to be in the casino, the casino is at peoples' place by online platforms.</h4>
+
+  <div class='tableauPlaceholder' id='viz1573332481013' style='position: relative'><noscript><a href='#'><img alt=' '
+    src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Be&#47;Betvenues&#47;Dashboard1&#47;1_rss.png'
+    style='border: none' /></a></noscript><object class='tableauViz' style='display:none;'>
+  <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+  <param name='embed_code_version' value='3' />
+  <param name='site_root' value='' />
+  <param name='name' value='Betvenues&#47;Dashboard1' />
+  <param name='tabs' value='no' />
+  <param name='toolbar' value='yes' />
+  <param name='static_image'
+  value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Be&#47;Betvenues&#47;Dashboard1&#47;1.png' />
+  <param name='animate_transition' value='yes' />
+  <param name='display_static_image' value='yes' />
+  <param name='display_spinner' value='yes' />
+  <param name='display_overlay' value='yes' />
+  <param name='display_count' value='yes' />
+  <param name='filter' value='publish=yes' /></object></div>
+  <script type='text/javascript'>                    var divElement = document.getElementById('viz1573332481013');
+  var vizElement = divElement.getElementsByTagName('object')[0]; if (divElement.offsetWidth > 800) { vizElement.style.width = '60%'; vizElement.style.height = '827px'; } else if (divElement.offsetWidth > 500) { vizElement.style.width = '60%'; vizElement.style.height = '827px'; } else { vizElement.style.width = '100%'; vizElement.style.height = '727px'; } var scriptElement = document.createElement('script'); scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js'; vizElement.parentNode.insertBefore(scriptElement, vizElement);               
+  </script>
+<h4> Gambling activities in generated in 2014, 38,300 millions of pesos,  growing 16%</h4>
+<div class='tableauPlaceholder' id='viz1573332741555' style='position: relative'><noscript><a href='#'><img alt=' '
+  src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Be&#47;Betvenues&#47;MarketsizeinMexico&#47;1_rss.png'
+  style='border: none' /></a></noscript><object class='tableauViz' style='display:none;'>
+<param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+<param name='embed_code_version' value='3' />
+<param name='site_root' value='' />
+<param name='name' value='Betvenues&#47;MarketsizeinMexico' />
+<param name='tabs' value='no' />
+<param name='toolbar' value='yes' />
+<param name='static_image'
+value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Be&#47;Betvenues&#47;MarketsizeinMexico&#47;1.png' />
+<param name='animate_transition' value='yes' />
+<param name='display_static_image' value='yes' />
+<param name='display_spinner' value='yes' />
+<param name='display_overlay' value='yes' />
+<param name='display_count' value='yes' />
+<param name='filter' value='publish=yes' /></object></div>
+<script
+type='text/javascript'>                    var divElement = document.getElementById('viz1573332741555'); var vizElement = divElement.getElementsByTagName('object')[0]; vizElement.style.width = '98%'; vizElement.style.height = (divElement.offsetWidth * 0.40) + 'px'; var scriptElement = document.createElement('script'); scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js'; vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
+<h5>Gambling is a widely spread throughout the world. The growth statistics of this industry demonstrate its appeal to the public. In Mexico this type of business is a gold mine, it represents about USD 38,300 millions MXN (INEGI 2014).
+    There is a saying known as “the house always wins”. This can be by many factors but the most important one is, the data analysis.  Sometimes casinos lose, but it can be through fraud.
+    So how can you make money without cheating?
+    How can you deny the satisfaction to make money by random decisions? 
+    It can be said that relatively easy through the analysis of past events. By analyzing the king of sports, soccer. Through Premier League, La Liga and Bundesliga full season matches and machine learning, we will help to improve bettors’ probabilities to win bets.
+    So, if you want to bet, use the suggestions and prepare well. </h5>
+
+  <!-- Contact Section -->
+  <div class="w3-container w3-padding-32" id="contact">
+    <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Contact</h3>
+    <p>Lets get in touch and talk about your next project.</p>
+    <form action="/action_page.php" target="_blank">
+      <input class="w3-input w3-border" type="text" placeholder="Name" required name="Name">
+      <input class="w3-input w3-section w3-border" type="text" placeholder="Email" required name="Email">
+      <input class="w3-input w3-section w3-border" type="text" placeholder="Subject" required name="Subject">
+      <input class="w3-input w3-section w3-border" type="text" placeholder="Comment" required name="Comment">
+      <button class="w3-button w3-black w3-section" type="submit">
+        <i class="fa fa-paper-plane"></i> SEND MESSAGE
+      </button>
+    </form>
+  </div>
+  
+<!-- Image of location/map -->
+<div class="w3-container">
+  <img src="img/EPL.jpg" class="w3-image" style="width:100%">
+</div>
+
+<!-- End page content -->
+</div>
+
+
+<!-- Footer -->
+<footer class="w3-center w3-black w3-padding-16">
+  <p>Powered by Pythoneers©</a></p>
+</footer>
+
+</body>
+</html>
