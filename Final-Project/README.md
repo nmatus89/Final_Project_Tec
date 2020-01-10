@@ -1,2 +1,3 @@
 # Final project bootcamp
-Python with flask, python with scraping and betting model and chromedriver for scraping
+
+Wanna win money with sports betting, use the betting model powered by machine learning and start gambling.
