@@ -2,5 +2,4 @@
 
 ## Overview
 
-This week is all project work days and Final Project Presentations.
-- - -
+Betting Sports website powered by machine learning.
